@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Sparrow</string>
+
+    <!-- Auth -->
+    <string name="txtEmail">Email</string>
+    <string name="txtPassword">Contraseña</string>
+    <string name="txtLogin">Acceder</string>
+    <string name="txtSignUp">Registrarse</string>
+    <string name="txtAuthWelcome">¡Hola, bienvenido/a a Sparrow!</string>
+    <string name="txtGoogleAuth">Autenticarse con Google</string>
+</resources>

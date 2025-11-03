@@ -1,0 +1,45 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.google.gms.google.services)
+}
+
+android {
+    namespace = 'es.upm.miw.sparrow'
+    compileSdk = 36
+
+    defaultConfig {
+        applicationId = "es.upm.miw.sparrow"
+        minSdk = 28
+        targetSdk = 35
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    defaultConfig {
+        resConfigs "en" // And any other languages you support
+        resConfigs "es"
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    api libs.material
+    implementation libs.appcompat
+    implementation libs.constraintlayout
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.auth
+    implementation libs.firebase.ui.auth
+    implementation(platform("com.google.firebase:firebase-bom:34.5.0"))
+    implementation("com.google.firebase:firebase-analytics")
+}
