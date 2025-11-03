@@ -1,4 +1,4 @@
-package es.upm.miw.sparrow;
+package es.upm.miw.sparrow.activities;
 
 import android.os.Bundle;
 
