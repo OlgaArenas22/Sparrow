@@ -11,4 +11,12 @@
 
     <!-- Preferences -->
     <string name="prefs_file">es.upm.miw.sparrow.PREFERENCE_FILE_KEY</string>
+
+    <!-- Home menu -->
+    <string name="btnEditProfile">Editar perfil</string>
+    <string name="btnSettings">Ajustes</string>
+    <string name="btnLogout">Cerrar sesión</string>
+    <string name="emailHint">example@gmail.com</string>
+    <string name="drawer_open">Abrir navegación</string>
+    <string name="drawer_close">Cerrar navegación</string>
 </resources>

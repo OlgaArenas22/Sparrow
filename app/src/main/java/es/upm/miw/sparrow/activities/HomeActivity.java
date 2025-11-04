@@ -1,26 +1,37 @@
 package es.upm.miw.sparrow.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
+import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
-import org.w3c.dom.Text;
+import androidx.appcompat.widget.Toolbar;
 
 import es.upm.miw.sparrow.R;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private SharedPreferences.Editor prefs;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private ActionBarDrawerToggle toggle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,27 +42,73 @@ public class HomeActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.nav_view), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        setupDrawer(toolbar);
+
         prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit();
 
         Bundle bundle = getIntent().getExtras();
         String email = bundle.getString("email", null);
         setup(email);
-        dataSaving(email);
     }
 
-    public void setup(String email){
-        Button btnLogOut = findViewById(R.id.logOut);
-        EditText emailText = findViewById(R.id.email);
-        emailText.setText(email);
+    //region Menu
+    public void setupDrawer(Toolbar toolbar){
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
 
-        btnLogOut.setOnClickListener(v -> {
+        toggle = new ActionBarDrawerToggle(
+                this,
+                drawerLayout,
+                toolbar,
+                R.string.drawer_open,
+                R.string.drawer_close
+        );
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item){
+        int id = item.getItemId();
+
+        if (id == R.id.nav_edit_profile) {
+        } else if (id == R.id.nav_settings) {
+
+        } else if (id == R.id.btnLogout) {
             dataClear();
             FirebaseAuth.getInstance().signOut();
-            onBackPressed();
-        });
+            Intent i = new Intent(this, AuthActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+            finish();
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 
-    public void dataSaving(String email){
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+    //endregion
+
+    public void setup(String email){
+        View header = navigationView.getHeaderView(0);
+        TextView emailText = header.findViewById(R.id.email);
+        emailText.setText(email);
         prefs.putString("email", email);
         prefs.apply();
     }
