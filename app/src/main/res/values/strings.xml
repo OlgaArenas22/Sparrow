@@ -19,4 +19,11 @@
     <string name="emailHint">example@gmail.com</string>
     <string name="drawer_open">Abrir navegación</string>
     <string name="drawer_close">Cerrar navegación</string>
+
+    <!-- Didactic options -->
+    <string name="txtMusic">Músic</string>
+    <string name="txtArt">Arte</string>
+    <string name="txtMaths">Matemáticas</string>
+    <string name="txtLanguage">Lengua</string>
+    <string name="txtEnglish">Inglés</string>
 </resources>

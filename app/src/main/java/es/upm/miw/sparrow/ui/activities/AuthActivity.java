@@ -1,4 +1,4 @@
-package es.upm.miw.sparrow.activities;
+package es.upm.miw.sparrow.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;

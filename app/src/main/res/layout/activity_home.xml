@@ -6,35 +6,86 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".activities.HomeActivity">
+    android:background="@color/white"
+    android:backgroundTint="@color/white"
+    tools:context=".ui.activities.HomeActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/background_menu">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:title="@string/app_name"
             app:titleCentered="true"
-            app:titleTextColor="@color/black"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:titleTextAppearance="@style/ToolbarTitleFont"
+            app:titleTextColor="@color/black" />
 
-
-        <Button
-            android:id="@+id/logOut"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="296dp"
-            android:text="Button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
+        <ScrollView
+            android:id="@+id/scrollMenu"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:id="@+id/listMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:padding="16dp">
+
+                <ImageButton
+                    android:id="@+id/btnMusic"
+                    style="@style/MenuImageButton"
+                    android:src="@drawable/ic_music"
+                    android:contentDescription="@string/txtMusic"
+                    android:layout_marginBottom="12dp"/>
+
+                <ImageButton
+                    android:id="@+id/btnArt"
+                    style="@style/MenuImageButton"
+                    android:src="@drawable/ic_art"
+                    android:contentDescription="@string/txtArt"
+                    android:layout_marginBottom="12dp"/>
+
+                <ImageButton
+                    android:id="@+id/btnMaths"
+                    style="@style/MenuImageButton"
+                    android:src="@drawable/ic_maths"
+                    android:contentDescription="@string/txtMaths"
+                    android:layout_marginBottom="12dp"/>
+
+                <ImageButton
+                    android:id="@+id/btnLanguage"
+                    style="@style/MenuImageButton"
+                    android:src="@drawable/ic_language"
+                    android:contentDescription="@string/txtLanguage"
+                    android:layout_marginBottom="12dp"/>
+
+                <ImageButton
+                    android:id="@+id/btnEnglish"
+                    style="@style/MenuImageButton"
+                    android:src="@drawable/ic_english"
+                    android:contentDescription="@string/txtEnglish"
+                    android:layout_marginBottom="12dp"/>
+            </LinearLayout>
+        </ScrollView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
