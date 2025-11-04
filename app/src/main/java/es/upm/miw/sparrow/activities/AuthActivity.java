@@ -1,8 +1,11 @@
 package es.upm.miw.sparrow.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -25,13 +28,12 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.GoogleAuthCredential;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-import es.upm.miw.sparrow.ProviderType;
 import es.upm.miw.sparrow.R;
 
 public class AuthActivity extends AppCompatActivity {
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +46,18 @@ public class AuthActivity extends AppCompatActivity {
             return insets;
         });
 
+        prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
+
         analyticsEvent();
+        session();
         setupFirebase();
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        View authLayout = findViewById(R.id.main);
+        authLayout.setVisibility(View.VISIBLE);
     }
 
     private void analyticsEvent(){
@@ -53,6 +65,15 @@ public class AuthActivity extends AppCompatActivity {
         var bundle = new Bundle();
         bundle.putString("message", "Integración de Firebase completa");
         analytics.logEvent("InitScreen", bundle);
+    }
+
+    private void session(){
+        String email = prefs.getString("email", null);
+        if(email != null){
+            View authLayout = findViewById(R.id.main);
+            authLayout.setVisibility(View.INVISIBLE);
+            moveHome(email);
+        }
     }
 
     private void setupFirebase(){
@@ -69,7 +90,7 @@ public class AuthActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()){
-                                moveHome();
+                                moveHome(email.getText().toString());
 
                             }else{
                                 showAlert();
@@ -87,7 +108,7 @@ public class AuthActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()){
-                                moveHome();
+                                moveHome(email.getText().toString());
                             }else{
                                 showAlert();
                             }
@@ -102,8 +123,8 @@ public class AuthActivity extends AppCompatActivity {
                     .requestEmail()
                     .build();
             GoogleSignInClient googleClient = GoogleSignIn.getClient(this, googleConf);
-            Intent signInIntent = googleClient.getSignInIntent();
-            startActivityForResult(signInIntent, 100);
+            googleClient.signOut();
+            startActivityForResult(googleClient.getSignInIntent(), 100);
         });
     }
 
@@ -124,7 +145,7 @@ public class AuthActivity extends AppCompatActivity {
                             .signInWithCredential(credential)
                             .addOnCompleteListener(this, t -> {
                                 if (t.isSuccessful()) {
-                                    moveHome();
+                                    moveHome(account.getEmail());
                                 } else {
                                     showAlert();
                                 }
@@ -138,7 +159,7 @@ public class AuthActivity extends AppCompatActivity {
     }
 
     private void showAlert(){
-        var builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Error");
         builder.setMessage("Error de autenticación");
         builder.setPositiveButton("Aceptar", null);
@@ -146,8 +167,9 @@ public class AuthActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void moveHome(){
+    private void moveHome(String email){
         Intent home = new Intent(this, HomeActivity.class);
+        home.putExtra("email",email);
         startActivity(home);
     }
 }

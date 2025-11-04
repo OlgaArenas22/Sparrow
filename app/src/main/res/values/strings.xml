@@ -8,4 +8,7 @@
     <string name="txtSignUp">Registrarse</string>
     <string name="txtAuthWelcome">¡Hola, bienvenido/a a Sparrow!</string>
     <string name="txtGoogleAuth">Autenticarse con Google</string>
+
+    <!-- Preferences -->
+    <string name="prefs_file">es.upm.miw.sparrow.PREFERENCE_FILE_KEY</string>
 </resources>
