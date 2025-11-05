@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="authBtnStyle" parent="ShapeAppearanceOverlay.Material3.Button">
+    <style name="TextAppearance.MyApp.AnswerButton" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/alexandria_bold</item>
+        <item name="fontFamily">@font/alexandria_bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="authBtnStyle" parent="Widget.Material3.Button.TextButton">
         <item name="android:textColor">@color/black</item>
         <item name="android:backgroundTint">@color/white</item>
+        <item name="cornerRadius">8dp</item>
     </style>
-    <style name="authGoogleBtnStyle" parent="ShapeAppearanceOverlay.Material3.Button">
+    <style name="authGoogleBtnStyle" parent="Widget.Material3.Button.TextButton">
         <item name="android:textColor">@color/white</item>
         <item name="android:backgroundTint">@color/btnGoogleAuth</item>
+        <item name="cornerRadius">8dp</item>
     </style>
+
     <style name="ToolbarTitleFont" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="fontFamily">@font/one_slice</item>
         <item name="android:textSize">35sp</item>
@@ -19,5 +28,50 @@
         <item name="android:adjustViewBounds">true</item>
         <item name="android:scaleType">centerInside</item>
         <item name="android:padding">8dp</item>
+    </style>
+    <style name="FragmentTitleStyle">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/momo_trust_display</item>
+        <item name="android:background">@color/quiz_title</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="Answer1ButtonStyle" parent="Widget.Material3.Button.ElevatedButton">
+        <item name="android:layout_width">179dp</item>
+        <item name="android:layout_height">97dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.MyApp.AnswerButton</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="backgroundTint">@color/blueAnswer</item>
+        <item name="cornerRadius">0dp</item>
+        <item name="android:text">@string/txtAnswer</item>
+    </style>
+    <style name="Answer2ButtonStyle" parent="Widget.Material3.Button.ElevatedButton">
+        <item name="android:layout_width">179dp</item>
+        <item name="android:layout_height">97dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.MyApp.AnswerButton</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="backgroundTint">@color/redAnswer</item>
+        <item name="cornerRadius">0dp</item>
+        <item name="android:text">@string/txtAnswer</item>
+    </style>
+    <style name="Answer3ButtonStyle" parent="Widget.Material3.Button.ElevatedButton">
+        <item name="android:layout_width">179dp</item>
+        <item name="android:layout_height">97dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.MyApp.AnswerButton</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="backgroundTint">@color/greenAnswer</item>
+        <item name="cornerRadius">0dp</item>
+        <item name="android:text">@string/txtAnswer</item>
+    </style>
+    <style name="Answer4ButtonStyle" parent="Widget.Material3.Button.ElevatedButton">
+        <item name="android:layout_width">179dp</item>
+        <item name="android:layout_height">97dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.MyApp.AnswerButton</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="backgroundTint">@color/orangeAnswer</item>
+        <item name="cornerRadius">0dp</item>
+        <item name="android:text">@string/txtAnswer</item>
     </style>
 </resources>

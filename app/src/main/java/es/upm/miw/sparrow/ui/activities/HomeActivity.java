@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -24,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import androidx.appcompat.widget.Toolbar;
 
 import es.upm.miw.sparrow.R;
+import es.upm.miw.sparrow.ui.fragments.MusicFragment;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -56,6 +59,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         Bundle bundle = getIntent().getExtras();
         String email = bundle.getString("email", null);
         setup(email);
+        setButtonListeners();
     }
 
     //region Menu
@@ -115,5 +119,34 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     public void dataClear(){
         prefs.clear();
         prefs.apply();
+    }
+
+    public void setButtonListeners(){
+        ImageButton btnMusic = findViewById(R.id.btnMusic);
+        ImageButton btnArt = findViewById(R.id.btnArt);
+        ImageButton btnMaths = findViewById(R.id.btnMaths);
+        ImageButton btnLanguage = findViewById(R.id.btnLanguage);
+        ImageButton btnEnglish = findViewById(R.id.btnEnglish);
+
+        btnMusic.setOnClickListener(v->{
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main, new MusicFragment())
+                    .addToBackStack("music")
+                    .commit();
+        });
+        btnArt.setOnClickListener(v->{
+
+        });
+        btnMaths.setOnClickListener(v->{
+
+        });
+        btnLanguage.setOnClickListener(v->{
+
+        });
+        btnEnglish.setOnClickListener(v->{
+
+        });
+
     }
 }

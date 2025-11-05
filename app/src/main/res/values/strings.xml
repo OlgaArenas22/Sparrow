@@ -21,9 +21,17 @@
     <string name="drawer_close">Cerrar navegación</string>
 
     <!-- Didactic options -->
-    <string name="txtMusic">Músic</string>
-    <string name="txtArt">Arte</string>
-    <string name="txtMaths">Matemáticas</string>
-    <string name="txtLanguage">Lengua</string>
-    <string name="txtEnglish">Inglés</string>
+    <string name="txtMusic">MÚSICA</string>
+    <string name="txtArt">ARTE</string>
+    <string name="txtMaths">MATEMÁTICAS</string>
+    <string name="txtLanguage">LENGUA</string>
+    <string name="txtEnglish">INGLÉS</string>
+
+    <!-- Music questions -->
+    <string name="hintMusicQuestion">¿Qué compositor...?</string>
+    <string name="txtAnswer">Respuesta</string>
+    <string name="descImageQuiz">Imagen de la pregunta</string>
+
+    <!-- Dialogs -->
+    <string name="txtReturn">Volver</string>
 </resources>

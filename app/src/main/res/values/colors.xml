@@ -2,6 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="main_background">#8BEFF7</color>
+    <color name="auth_background">#8BEFF7</color>
+    <color name="quiz_title">#8dcef8</color>
     <color name="btnGoogleAuth">#ED5C5C</color>
+    <color name="blueAnswer">#2B97ED</color>
+    <color name="redAnswer">#D33333</color>
+    <color name="greenAnswer">#5DDB61</color>
+    <color name="orangeAnswer">#E9A43F</color>
+    <color name="purpleTimer">#942FF5</color>
 </resources>
