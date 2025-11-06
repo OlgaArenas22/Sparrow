@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import androidx.appcompat.widget.Toolbar;
 
 import es.upm.miw.sparrow.R;
+import es.upm.miw.sparrow.ui.fragments.MathsFragment;
 import es.upm.miw.sparrow.ui.fragments.MusicFragment;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -139,7 +140,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         });
         btnMaths.setOnClickListener(v->{
-
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main, new MathsFragment())
+                    .addToBackStack("maths")
+                    .commit();
         });
         btnLanguage.setOnClickListener(v->{
 
