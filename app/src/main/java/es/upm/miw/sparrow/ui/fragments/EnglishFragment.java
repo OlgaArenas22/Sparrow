@@ -26,14 +26,14 @@ import com.google.android.material.button.MaterialButton;
 import es.upm.miw.sparrow.R;
 import es.upm.miw.sparrow.domain.Question;
 import es.upm.miw.sparrow.ui.dialogs.ResultsDialog;
+import es.upm.miw.sparrow.view.EnglishViewModel;
 import es.upm.miw.sparrow.view.MathsViewModel;
-import es.upm.miw.sparrow.view.MusicViewModel;
 
-public class MathsFragment extends Fragment implements ResultsDialog.GameResultsDialogListener{
+public class EnglishFragment extends Fragment implements ResultsDialog.GameResultsDialogListener{
 
     private static final int MILLIS = 10 * 1000;
 
-    private MathsViewModel vm;
+    private EnglishViewModel vm;
 
     private TextView tvQuestion;
     private ImageView image;
@@ -47,14 +47,14 @@ public class MathsFragment extends Fragment implements ResultsDialog.GameResults
 
     private ValueAnimator timerAnimator;
 
-    public MathsFragment() {}
+    public EnglishFragment() {}
 
-    public static MathsFragment newInstance() { return new MathsFragment(); }
+    public static EnglishFragment newInstance() { return new EnglishFragment(); }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_maths, container, false);
+        return inflater.inflate(R.layout.fragment_english, container, false);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class MathsFragment extends Fragment implements ResultsDialog.GameResults
             return insets;
         });
 
-        vm = new ViewModelProvider(this).get(MathsViewModel.class);
+        vm = new ViewModelProvider(this).get(EnglishViewModel.class);
 
         loadingSpinner = view.findViewById(R.id.loading_spinner);
         quizContentContainer = view.findViewById(R.id.quiz_content_container);
@@ -147,8 +147,8 @@ public class MathsFragment extends Fragment implements ResultsDialog.GameResults
         if (getActivity() != null) {
             getActivity().getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.main, MathsFragment.newInstance())
-                    .addToBackStack("maths")
+                    .replace(R.id.main, EnglishFragment.newInstance())
+                    .addToBackStack("english")
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .commit();
         }

@@ -70,7 +70,7 @@ public class ResultsDialog extends DialogFragment {
 
         tvPoints.setText(String.format("%d/%d", numPoints, totalPoints));
 
-        if (numPoints >= (totalPoints / 2)) {
+        if ((double)numPoints>= ((double)totalPoints / 2)) {
             ivZazu.setImageResource(R.drawable.happy_zazu);
         } else {
             ivZazu.setImageResource(R.drawable.serious_zazu);

@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import androidx.appcompat.widget.Toolbar;
 
 import es.upm.miw.sparrow.R;
+import es.upm.miw.sparrow.ui.fragments.EnglishFragment;
 import es.upm.miw.sparrow.ui.fragments.MathsFragment;
 import es.upm.miw.sparrow.ui.fragments.MusicFragment;
 
@@ -150,7 +151,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         });
         btnEnglish.setOnClickListener(v->{
-
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main, new EnglishFragment())
+                    .addToBackStack("english")
+                    .commit();
         });
 
     }

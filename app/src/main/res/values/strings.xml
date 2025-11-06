@@ -41,4 +41,7 @@
 
     <!-- Maths questions -->
     <string name="hintMathsQuestion">¿Cuánto es 2+2?</string>
+
+    <!-- English questions -->
+    <string name="hintEnglishQuestion">¿Qué significa "sun" en español?</string>
 </resources>
