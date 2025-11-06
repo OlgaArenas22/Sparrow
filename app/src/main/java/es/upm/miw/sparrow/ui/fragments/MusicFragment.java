@@ -18,15 +18,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
 
 import es.upm.miw.sparrow.R;
 import es.upm.miw.sparrow.domain.Question;
+import es.upm.miw.sparrow.ui.dialogs.ResultsDialog;
 import es.upm.miw.sparrow.view.MusicViewModel;
 
-public class MusicFragment extends Fragment {
+public class MusicFragment extends Fragment implements ResultsDialog.GameResultsDialogListener{
 
     private static final int MILLIS = 10 * 1000;
 
@@ -114,8 +116,7 @@ public class MusicFragment extends Fragment {
 
         vm.getFinished().observe(getViewLifecycleOwner(), fin -> {
             if (fin != null && fin) {
-                setButtonsEnabled(false);
-                getParentFragmentManager().popBackStack();
+                showEndGameDialog();
             }
         });
 
@@ -132,6 +133,34 @@ public class MusicFragment extends Fragment {
         });
 
         vm.loadQuestionsIfNeeded();
+    }
+
+    public void onReturnToMenuClicked() {
+        setButtonsEnabled(false);
+        getParentFragmentManager().popBackStack();
+    }
+
+    public void onPlayAgainClicked() {
+        setButtonsEnabled(false);
+        getParentFragmentManager().popBackStack();
+        if (getActivity() != null) {
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main, MusicFragment.newInstance())
+                    .addToBackStack("music")
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .commit();
+        }
+    }
+
+    private void showEndGameDialog() {
+        if (!isAdded()) return;
+        if (getChildFragmentManager().findFragmentByTag(ResultsDialog.TAG) != null) return;
+        requireView().post(() -> {
+            if (!isAdded()) return;
+            ResultsDialog dialog = ResultsDialog.newInstance(vm.getPoints(), vm.getTotalQuestions());
+            dialog.show(getChildFragmentManager(), ResultsDialog.TAG);
+        });
     }
 
     private void showQuizContent() {

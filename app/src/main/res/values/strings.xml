@@ -34,4 +34,8 @@
 
     <!-- Dialogs -->
     <string name="txtReturn">Volver</string>
+    <string name="txtResults">Resultados</string>
+    <string name="hintPoints">3/5</string>
+    <string name="txtGameAgain">Volver a jugar</string>
+    <string name="txtZazuResults">Zazu contento o serio según el resultado</string>
 </resources>

@@ -1,30 +1,43 @@
 package es.upm.miw.sparrow.view;
 
+import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import es.upm.miw.sparrow.data.QuestionDTO;
 import es.upm.miw.sparrow.domain.Question;
+import es.upm.miw.sparrow.R;
 
-public class MusicViewModel extends ViewModel {
+public class MusicViewModel extends AndroidViewModel {
 
     public static final int QUESTION_SECONDS = 10;
     public static final long QUESTION_MILLIS = QUESTION_SECONDS * 1000L;
 
     private static final long HILIGHT_MILLIS = 900L;
+
+    private int points = 0;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -33,7 +46,7 @@ public class MusicViewModel extends ViewModel {
     private final MutableLiveData<List<Question>> questions = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Integer> currentIndex = new MutableLiveData<>(0);
 
-    private final MutableLiveData<Integer> selectedIndex = new MutableLiveData<>(null); // puede ser null
+    private final MutableLiveData<Integer> selectedIndex = new MutableLiveData<>(null);
     private final MutableLiveData<Integer> correctIndex = new MutableLiveData<>(null);
     private final MutableLiveData<Boolean> locked = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> finished = new MutableLiveData<>(false);
@@ -42,14 +55,21 @@ public class MusicViewModel extends ViewModel {
 
     private boolean loaded = false;
 
-    public int getQuestionSeconds() { return QUESTION_SECONDS; }
-    public long getQuestionMillis() { return QUESTION_MILLIS; }
+    public MusicViewModel(@NonNull Application application) {
+        super(application);
+    }
 
     public @Nullable Question getCurrentQuestionSync() {
         List<Question> qs = questions.getValue();
         Integer i = currentIndex.getValue();
         if (qs == null || qs.isEmpty() || i == null || i < 0 || i >= qs.size()) return null;
         return qs.get(i);
+    }
+
+    public int getPoints() { return points; }
+    public int getTotalQuestions() {
+        List<Question> qs = questions.getValue();
+        return qs != null ? qs.size() : 0;
     }
 
     public void loadQuestionsIfNeeded() {
@@ -120,6 +140,10 @@ public class MusicViewModel extends ViewModel {
         Question q = getCurrentQuestionSync();
         if (q == null) return;
 
+        if (idx == q.correctIndex) {
+            points++;
+        }
+
         selectedIndex.setValue(idx);
         handler.postDelayed(this::nextQuestion, HILIGHT_MILLIS);
     }
@@ -133,10 +157,45 @@ public class MusicViewModel extends ViewModel {
         if (next >= qs.size()) {
             finished.setValue(true);
             cancelTimer();
+            saveResult();
             return;
         }
         currentIndex.setValue(next);
         startQuestion();
+    }
+
+    private void saveResult() {
+        Context context = getApplication().getApplicationContext();
+
+        int numPoints = points;
+        int totalQuestions = getTotalQuestions();
+
+        String userEmail;
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null && user.getEmail() != null) {
+            userEmail = user.getEmail();
+        } else {
+            SharedPreferences prefs = context.getSharedPreferences(
+                    context.getString(R.string.prefs_file),
+                    Context.MODE_PRIVATE
+            );
+            userEmail = prefs.getString("email", "no-auth-user@guest.com");
+        }
+
+        final String finalUserEmail = userEmail;
+
+        Map<String, Object> matchData = new HashMap<>();
+        matchData.put("email", finalUserEmail);
+        matchData.put("numPoints", numPoints);
+        matchData.put("totalPoints", totalQuestions);
+        matchData.put("category", "Música");
+        matchData.put("timestamp", FieldValue.serverTimestamp());
+
+        db.collection("matches").document()
+                .set(matchData)
+                .addOnSuccessListener(aVoid -> Log.d("Firebase", "Última partida guardadq en matches/" + finalUserEmail))
+                .addOnFailureListener(e -> Log.e("Firebase", "Error al guardar el match", e));
     }
 
     private void cancelTimer() {

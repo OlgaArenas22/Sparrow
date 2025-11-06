@@ -74,4 +74,30 @@
         <item name="cornerRadius">0dp</item>
         <item name="android:text">@string/txtAnswer</item>
     </style>
+    <style name="RoundedGameAgainButtonStyle">
+        <item name="android:layout_width">87dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:background">@drawable/bg_game_again_button</item>
+        <item name="android:elevation">10dp</item>
+        <item name="android:translationZ">10dp</item>
+    </style>
+    <style name="RoundedReturnButtonStyle">
+        <item name="android:layout_width">87dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:background">@drawable/bg_return_button</item>
+        <item name="android:elevation">10dp</item>
+        <item name="android:translationZ">10dp</item>
+    </style>
+
+    <style name="ResultImageStyle">
+        <item name="android:layout_width">233dp</item>
+        <item name="android:layout_height">358dp</item>
+    </style>
+    <style name="TransparentDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="backgroundInsetStart">0dp</item>
+        <item name="backgroundInsetEnd">0dp</item>
+        <item name="backgroundInsetTop">0dp</item>
+        <item name="backgroundInsetBottom">0dp</item>
+    </style>
 </resources>
