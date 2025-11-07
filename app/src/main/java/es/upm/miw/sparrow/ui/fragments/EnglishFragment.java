@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -25,11 +26,11 @@ import com.google.android.material.button.MaterialButton;
 
 import es.upm.miw.sparrow.R;
 import es.upm.miw.sparrow.domain.Question;
+import es.upm.miw.sparrow.ui.dialogs.ExitQuizDialog;
 import es.upm.miw.sparrow.ui.dialogs.ResultsDialog;
 import es.upm.miw.sparrow.view.EnglishViewModel;
-import es.upm.miw.sparrow.view.MathsViewModel;
 
-public class EnglishFragment extends Fragment implements ResultsDialog.GameResultsDialogListener{
+public class EnglishFragment extends Fragment implements ResultsDialog.GameResultsDialogListener, ExitQuizDialog.ExitQuizDialogListener {
 
     private static final int MILLIS = 10 * 1000;
 
@@ -51,6 +52,23 @@ public class EnglishFragment extends Fragment implements ResultsDialog.GameResul
 
     public static EnglishFragment newInstance() { return new EnglishFragment(); }
 
+    @Override
+    public void onCreate(@NonNull Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                pauseProgressBar();
+                requireView().post(() -> {
+                    if (!isAdded()) return;
+                    ExitQuizDialog dialog = ExitQuizDialog.newInstance();
+                    dialog.show(getChildFragmentManager(), ResultsDialog.TAG);
+                });
+
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -140,6 +158,30 @@ public class EnglishFragment extends Fragment implements ResultsDialog.GameResul
         setButtonsEnabled(false);
         getParentFragmentManager().popBackStack();
     }
+
+    public void onResumeQuizClicked(){
+        vm.resumeTimer();
+        resumeProgressBar();
+
+    }
+
+    private void pauseProgressBar(){
+        timerAnimator.cancel();
+        vm.pauseTimer();
+    }
+
+    private void resumeProgressBar(){
+        vm.resumeTimer();
+        timer.setProgress((int)vm.getTimeLeftInMillis());
+        timerAnimator = ValueAnimator.ofInt((int) vm.getTimeLeftInMillis(), 0);
+        timerAnimator.setDuration(vm.getTimeLeftInMillis());
+        timerAnimator.addUpdateListener(anim -> {
+            int remaining = (int) anim.getAnimatedValue();
+            timer.setProgress(remaining);
+        });
+        timerAnimator.start();
+    }
+
 
     public void onPlayAgainClicked() {
         setButtonsEnabled(false);

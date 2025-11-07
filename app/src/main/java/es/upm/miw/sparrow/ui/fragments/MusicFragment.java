@@ -49,15 +49,13 @@ public class MusicFragment extends Fragment implements ResultsDialog.GameResults
     private ValueAnimator timerAnimator;
 
     public MusicFragment() {}
-    private int currentProcess;
-    private float currentAnimation;
 
     public static MusicFragment newInstance() { return new MusicFragment(); }
 
     @Override
     public void onCreate(@NonNull Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled */) {
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 pauseProgressBar();
@@ -168,25 +166,20 @@ public class MusicFragment extends Fragment implements ResultsDialog.GameResults
     }
 
     private void pauseProgressBar(){
-        currentProcess = timer.getProgress();
-        Object animatedValue = timerAnimator.getAnimatedValue();
-        currentAnimation = (int) animatedValue;
         timerAnimator.cancel();
         vm.pauseTimer();
     }
 
     private void resumeProgressBar(){
-        timer.setProgress(currentProcess);
-        long remainingTime = (long) currentAnimation;
-        long currentPlayTime = MILLIS - remainingTime;
-        timerAnimator = ValueAnimator.ofInt((int) remainingTime, 0);
-        timerAnimator.setDuration(remainingTime);
+        vm.resumeTimer();
+        timer.setProgress((int)vm.getTimeLeftInMillis());
+        timerAnimator = ValueAnimator.ofInt((int) vm.getTimeLeftInMillis(), 0);
+        timerAnimator.setDuration(vm.getTimeLeftInMillis());
         timerAnimator.addUpdateListener(anim -> {
             int remaining = (int) anim.getAnimatedValue();
             timer.setProgress(remaining);
         });
         timerAnimator.start();
-        vm.resumeTimer();
     }
 
 

@@ -47,7 +47,7 @@ public class MusicViewModel extends AndroidViewModel {
     private CountDownTimer timer;
 
     private long timeLeftInMillis;
-    private Integer currentSelectedIndex = null;
+    private Integer currentSelectedIndex;
 
     private long startTime;
 
@@ -122,14 +122,14 @@ public class MusicViewModel extends AndroidViewModel {
     private void startQuestion() {
         locked.setValue(false);
         selectedIndex.setValue(null);
-        startTime = System.currentTimeMillis();
 
         Question q = getCurrentQuestionSync();
         if (q == null) {
             finished.setValue(true);
             return;
         }
-
+        timeLeftInMillis = QUESTION_MILLIS;
+        startTime = System.currentTimeMillis();
         correctIndex.setValue(q.correctIndex);
 
         cancelTimer();
@@ -147,7 +147,7 @@ public class MusicViewModel extends AndroidViewModel {
     public void pauseTimer(){
         if(timer != null){
             long timeElapsed = System.currentTimeMillis() - startTime;
-            timeLeftInMillis = QUESTION_MILLIS - timeElapsed;
+            timeLeftInMillis = timeLeftInMillis - timeElapsed;
         }
         currentSelectedIndex = selectedIndex.getValue();
         cancelTimer();
@@ -156,6 +156,7 @@ public class MusicViewModel extends AndroidViewModel {
     public void resumeTimer(){
         cancelTimer();
 
+        startTime = System.currentTimeMillis();
         selectedIndex.setValue(currentSelectedIndex);
 
         long millisToStart = (timeLeftInMillis > 0 && timeLeftInMillis < QUESTION_MILLIS)
@@ -167,7 +168,7 @@ public class MusicViewModel extends AndroidViewModel {
             public void onFinish() {
                 locked.setValue(true);
                 selectedIndex.setValue(null);
-                handler.postDelayed(MusicViewModel.this::nextQuestion, HILIGHT_MILLIS);
+                handler.postDelayed(MusicViewModel.this::nextQuestion, timeLeftInMillis);
             }
         }.start();
     }
@@ -262,5 +263,7 @@ public class MusicViewModel extends AndroidViewModel {
     public LiveData<Boolean> getLocked()                { return locked; }
     public LiveData<Boolean> getFinished()              { return finished; }
     public LiveData<Exception> getError()               { return error; }
+
+    public long getTimeLeftInMillis(){return timeLeftInMillis;}
     //endregion
 }

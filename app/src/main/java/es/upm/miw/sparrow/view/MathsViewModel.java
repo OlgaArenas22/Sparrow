@@ -41,6 +41,10 @@ public class MathsViewModel extends AndroidViewModel {
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private int points = 0;
+    private long timeLeftInMillis;
+    private Integer currentSelectedIndex;
+
+    private long startTime;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private CountDownTimer timer;
 
@@ -107,12 +111,14 @@ public class MathsViewModel extends AndroidViewModel {
             finished.setValue(true);
             return;
         }
-
+        timeLeftInMillis = QUESTION_MILLIS;
+        startTime = System.currentTimeMillis();
         correctIndex.setValue(q.correctIndex);
 
         cancelTimer();
         timer = new CountDownTimer(QUESTION_MILLIS, 1_000) {
-            public void onTick(long ms) {}
+            public void onTick(long ms) {
+            }
             public void onFinish() {
                 locked.setValue(true);
                 selectedIndex.setValue(null);
@@ -194,6 +200,35 @@ public class MathsViewModel extends AndroidViewModel {
         }
     }
 
+    public void pauseTimer(){
+        if(timer != null){
+            long timeElapsed = System.currentTimeMillis() - startTime;
+            timeLeftInMillis = timeLeftInMillis - timeElapsed;
+        }
+        currentSelectedIndex = selectedIndex.getValue();
+        cancelTimer();
+    }
+
+    public void resumeTimer(){
+        cancelTimer();
+
+        startTime = System.currentTimeMillis();
+        selectedIndex.setValue(currentSelectedIndex);
+
+        long millisToStart = (timeLeftInMillis > 0 && timeLeftInMillis < QUESTION_MILLIS)
+                ? timeLeftInMillis
+                : QUESTION_MILLIS;
+        timer = new CountDownTimer(millisToStart, 1_000) {
+            public void onTick(long ms) {
+            }
+            public void onFinish() {
+                locked.setValue(true);
+                selectedIndex.setValue(null);
+                handler.postDelayed(MathsViewModel.this::nextQuestion, timeLeftInMillis);
+            }
+        }.start();
+    }
+
     @Override protected void onCleared() {
         super.onCleared();
         cancelTimer();
@@ -208,4 +243,5 @@ public class MathsViewModel extends AndroidViewModel {
     public LiveData<Boolean> getLocked() { return locked; }
     public LiveData<Boolean> getFinished() { return finished; }
     public LiveData<Exception> getError() { return error; }
+    public long getTimeLeftInMillis(){return timeLeftInMillis;}
 }
