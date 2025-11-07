@@ -37,11 +37,24 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
+    ImageButton btnMusic;
+    ImageButton btnArt;
+    ImageButton btnMaths;
+    ImageButton btnLanguage;
+    ImageButton btnEnglish;
+    private int initialBackStack;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
+
+        initialBackStack = getSupportFragmentManager().getBackStackEntryCount();
+
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+            int count = getSupportFragmentManager().getBackStackEntryCount();
+            enableButtons(count == initialBackStack);
+        });
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -125,13 +138,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void setButtonListeners(){
-        ImageButton btnMusic = findViewById(R.id.btnMusic);
-        ImageButton btnArt = findViewById(R.id.btnArt);
-        ImageButton btnMaths = findViewById(R.id.btnMaths);
-        ImageButton btnLanguage = findViewById(R.id.btnLanguage);
-        ImageButton btnEnglish = findViewById(R.id.btnEnglish);
+        btnMusic = findViewById(R.id.btnMusic);
+        btnArt = findViewById(R.id.btnArt);
+        btnMaths = findViewById(R.id.btnMaths);
+        btnLanguage = findViewById(R.id.btnLanguage);
+        btnEnglish = findViewById(R.id.btnEnglish);
 
         btnMusic.setOnClickListener(v->{
+            enableButtons(false);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.main, new MusicFragment())
@@ -142,6 +156,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         });
         btnMaths.setOnClickListener(v->{
+            enableButtons(false);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.main, new MathsFragment())
@@ -149,6 +164,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     .commit();
         });
         btnLanguage.setOnClickListener(v->{
+            enableButtons(false);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.main, new LanguageFragment())
@@ -156,12 +172,21 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     .commit();
         });
         btnEnglish.setOnClickListener(v->{
+            enableButtons(false);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.main, new EnglishFragment())
                     .addToBackStack("english")
                     .commit();
         });
-
     }
+
+    public void enableButtons(boolean enable){
+        btnMusic.setEnabled(enable);
+        btnArt.setEnabled(enable);
+        btnMaths.setEnabled(enable);
+        btnLanguage.setEnabled(enable);
+        btnEnglish.setEnabled(enable);
+    }
+
 }
