@@ -84,7 +84,7 @@ public class EnglishViewModel extends AndroidViewModel {
         if (loaded) return;
         loaded = true;
 
-        repo.fetch(10, "easy", new QuestionsRepository.Callback() {
+        repo.fetch(10, null, new QuestionsRepository.Callback() {
             @Override public void onSuccess(List<Question> list) {
                 if (list.isEmpty()) {
                     error.setValue(new IllegalStateException("Sin preguntas."));

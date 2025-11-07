@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.upm.miw.sparrow.R;
+import es.upm.miw.sparrow.data.QuestionDTO;
 import es.upm.miw.sparrow.data.QuestionsRepository;
 import es.upm.miw.sparrow.data.QuestionsRepositoryImpl;
 import es.upm.miw.sparrow.data.datasource.FirestoreQuestionsDataSource;
@@ -84,22 +86,34 @@ public class LanguageViewModel extends AndroidViewModel {
         if (loaded) return;
         loaded = true;
 
-        repo.fetch(10, "easy", new QuestionsRepository.Callback() {
-            @Override public void onSuccess(List<Question> list) {
-                if (list.isEmpty()) {
-                    error.setValue(new IllegalStateException("Sin preguntas."));
-                    return;
-                }
-                Collections.shuffle(list);
-                if (list.size() > 5) list = new ArrayList<>(list.subList(0, 5));
-                questions.setValue(list);
-                currentIndex.setValue(0);
-                startQuestion();
-            }
-            @Override public void onError(Throwable t) {
-                error.setValue(new Exception(t));
-            }
-        });
+        db.collection("languageQuestions")
+                .get()
+                .addOnSuccessListener(snap -> {
+                    List<Question> list = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : snap) {
+                        QuestionDTO dto = doc.toObject(QuestionDTO.class);
+                        if (dto != null &&
+                                dto.question != null &&
+                                dto.correct != null &&
+                                dto.wrong1 != null &&
+                                dto.wrong2 != null &&
+                                dto.wrong3 != null) {
+                            list.add(Question.fromDTO(dto));
+                        }
+                    }
+                    if (list.isEmpty()) {
+                        error.setValue(new IllegalStateException("No se encontraron preguntas en la base de datos."));
+                        return;
+                    }
+                    Collections.shuffle(list);
+                    if (list.size() > 5) {
+                        list = new ArrayList<>(list.subList(0, 5));
+                    }
+                    questions.setValue(list);
+                    currentIndex.setValue(0);
+                    startQuestion();
+                })
+                .addOnFailureListener(error::setValue);
     }
 
     private void startQuestion() {
