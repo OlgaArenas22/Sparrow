@@ -52,4 +52,10 @@
 
     <!-- Avatars-->
     <string name="avatar">Avatar</string>
+
+    <!--Exit quiz dialog -->
+    <string name="txtExitText">"Si sales ahora, perderás tu progreso. ¿Quieres volver al menú?"</string>
+    <string name="txtWarning">¡ATENCIÓN!</string>
+    <string name="txtResume">Continuar</string>
+    <string name="txtExit">Salir</string>
 </resources>

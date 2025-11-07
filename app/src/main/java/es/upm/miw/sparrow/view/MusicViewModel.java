@@ -46,6 +46,11 @@ public class MusicViewModel extends AndroidViewModel {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private CountDownTimer timer;
 
+    private long timeLeftInMillis;
+    private Integer currentSelectedIndex = null;
+
+    private long startTime;
+
     private final MutableLiveData<List<Question>> questions = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Integer> currentIndex = new MutableLiveData<>(0);
 
@@ -117,6 +122,7 @@ public class MusicViewModel extends AndroidViewModel {
     private void startQuestion() {
         locked.setValue(false);
         selectedIndex.setValue(null);
+        startTime = System.currentTimeMillis();
 
         Question q = getCurrentQuestionSync();
         if (q == null) {
@@ -128,6 +134,34 @@ public class MusicViewModel extends AndroidViewModel {
 
         cancelTimer();
         timer = new CountDownTimer(QUESTION_MILLIS, 1_000) {
+            public void onTick(long ms) {
+            }
+            public void onFinish() {
+                locked.setValue(true);
+                selectedIndex.setValue(null);
+                handler.postDelayed(MusicViewModel.this::nextQuestion, HILIGHT_MILLIS);
+            }
+        }.start();
+    }
+
+    public void pauseTimer(){
+        if(timer != null){
+            long timeElapsed = System.currentTimeMillis() - startTime;
+            timeLeftInMillis = QUESTION_MILLIS - timeElapsed;
+        }
+        currentSelectedIndex = selectedIndex.getValue();
+        cancelTimer();
+    }
+
+    public void resumeTimer(){
+        cancelTimer();
+
+        selectedIndex.setValue(currentSelectedIndex);
+
+        long millisToStart = (timeLeftInMillis > 0 && timeLeftInMillis < QUESTION_MILLIS)
+                ? timeLeftInMillis
+                : QUESTION_MILLIS;
+        timer = new CountDownTimer(millisToStart, 1_000) {
             public void onTick(long ms) {
             }
             public void onFinish() {
@@ -206,7 +240,7 @@ public class MusicViewModel extends AndroidViewModel {
                 .addOnFailureListener(e -> Log.e("Firebase", "Error al guardar el match", e));
     }
 
-    private void cancelTimer() {
+    public void cancelTimer() {
         if (timer != null) {
             timer.cancel();
             timer = null;

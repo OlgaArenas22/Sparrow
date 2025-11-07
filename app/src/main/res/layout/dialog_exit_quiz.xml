@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/exit_dialog_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="24dp"
+    android:orientation="vertical"
+    android:background="@drawable/bg_results_orange"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/txtWarning"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:fontFamily="@font/alexandria_bold"
+        android:layout_marginBottom="8dp"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/tvMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/txtExitText"
+        android:textSize="16sp"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/alexandria_bold"
+        android:textColor="@android:color/white"
+        android:gravity="center" />
+
+
+    <LinearLayout
+        android:layout_width="351dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnResume"
+            android:layout_width="128dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20sp"
+            android:elevation="5dp"
+            android:text="@string/txtResume"
+            android:textColor="@color/black"
+            android:translationZ="5dp" />
+
+        <Button
+            android:id="@+id/btnExit"
+            android:layout_width="105dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20sp"
+            android:elevation="5dp"
+            android:text="@string/txtExit"
+            android:textColor="@color/black"
+            android:translationZ="5dp" />
+    </LinearLayout>
+
+</LinearLayout>
+

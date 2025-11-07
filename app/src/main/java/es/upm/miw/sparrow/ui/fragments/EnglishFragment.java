@@ -189,10 +189,10 @@ public class EnglishFragment extends Fragment implements ResultsDialog.GameResul
             if (resId != 0) {
                 image.setImageResource(resId);
             } else {
-                image.setImageResource(R.drawable.maths_quiz_image);
+                image.setImageResource(R.drawable.english_quiz_image);
             }
         } else {
-            image.setImageResource(R.drawable.maths_quiz_image);
+            image.setImageResource(R.drawable.english_quiz_image);
         }
         restoreOriginalStyles();
         setButtonsEnabled(true);
