@@ -16,6 +16,8 @@
     <string name="btnEditProfile">Editar perfil</string>
     <string name="btnSettings">Ajustes</string>
     <string name="btnLogout">Cerrar sesión</string>
+    <string name="btnExit">Salir de la app</string>
+    <string name="btnMatches">Partidas</string>
     <string name="emailHint">example@gmail.com</string>
     <string name="drawer_open">Abrir navegación</string>
     <string name="drawer_close">Cerrar navegación</string>

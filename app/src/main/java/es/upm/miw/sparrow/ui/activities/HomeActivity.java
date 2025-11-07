@@ -113,7 +113,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     .replace(R.id.main, EditProfileFragment.newInstance(email))
                     .addToBackStack("edit_profile")
                     .commit();
-        } else if (id == R.id.nav_settings) {
+        } else if (id == R.id.matches){
+
+        }else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.btnLogout) {
             dataClear();
@@ -122,6 +124,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
             finish();
+        }else if (id == R.id.btnExit){
+            finishAffinity();
+            System.exit(0);
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;

@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -57,7 +56,7 @@ public class ResultsDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_music, null);
+        View view = inflater.inflate(R.layout.dialog_results, null);
 
         TextView tvPoints = view.findViewById(R.id.points);
         ImageView ivZazu = view.findViewById(R.id.imageView);
