@@ -9,7 +9,7 @@
     android:fitsSystemWindows="true"
     android:background="@color/white"
     android:backgroundTint="@color/white"
-    tools:context=".ui.fragments.MusicFragment">
+    tools:context=".ui.fragments.MathsFragment">
 
     <ProgressBar
         android:id="@+id/loading_spinner"

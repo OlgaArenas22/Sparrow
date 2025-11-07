@@ -30,6 +30,7 @@ import androidx.appcompat.widget.Toolbar;
 import es.upm.miw.sparrow.R;
 import es.upm.miw.sparrow.data.local.AvatarPrefs;
 import es.upm.miw.sparrow.data.local.AvatarUrlBuilder;
+import es.upm.miw.sparrow.ui.fragments.ArtFragment;
 import es.upm.miw.sparrow.ui.fragments.EditProfileFragment;
 import es.upm.miw.sparrow.ui.fragments.EnglishFragment;
 import es.upm.miw.sparrow.ui.fragments.LanguageFragment;
@@ -190,7 +191,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     .commit();
         });
         btnArt.setOnClickListener(v->{
-
+            enableButtons(false);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main, new ArtFragment())
+                    .addToBackStack("art")
+                    .commit();
         });
         btnMaths.setOnClickListener(v->{
             enableButtons(false);
