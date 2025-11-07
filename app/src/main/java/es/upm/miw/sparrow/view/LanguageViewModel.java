@@ -16,53 +16,50 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import es.upm.miw.sparrow.data.QuestionDTO;
+import es.upm.miw.sparrow.R;
 import es.upm.miw.sparrow.data.QuestionsRepository;
 import es.upm.miw.sparrow.data.QuestionsRepositoryImpl;
 import es.upm.miw.sparrow.data.datasource.FirestoreQuestionsDataSource;
 import es.upm.miw.sparrow.domain.Question;
-import es.upm.miw.sparrow.R;
 
-public class MusicViewModel extends AndroidViewModel {
+public class LanguageViewModel extends AndroidViewModel {
 
     public static final int QUESTION_SECONDS = 10;
     public static final long QUESTION_MILLIS = QUESTION_SECONDS * 1000L;
-
     private static final long HILIGHT_MILLIS = 900L;
 
-    private int points = 0;
-
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private int points = 0;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private CountDownTimer timer;
 
     private final MutableLiveData<List<Question>> questions = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Integer> currentIndex = new MutableLiveData<>(0);
-
     private final MutableLiveData<Integer> selectedIndex = new MutableLiveData<>(null);
     private final MutableLiveData<Integer> correctIndex = new MutableLiveData<>(null);
     private final MutableLiveData<Boolean> locked = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> finished = new MutableLiveData<>(false);
-
     private final MutableLiveData<Exception> error = new MutableLiveData<>(null);
 
     private boolean loaded = false;
+
     private final QuestionsRepository repo;
-    public MusicViewModel(@NonNull Application application) {
+
+    public LanguageViewModel(@NonNull Application application) {
         super(application);
         this.repo = new QuestionsRepositoryImpl(
                 java.util.Arrays.asList(
-                        new FirestoreQuestionsDataSource("musicQuestions")
+                        new FirestoreQuestionsDataSource("languageQuestions")
                 )
         );
     }
@@ -84,34 +81,22 @@ public class MusicViewModel extends AndroidViewModel {
         if (loaded) return;
         loaded = true;
 
-        db.collection("musicQuestions")
-                .get()
-                .addOnSuccessListener(snap -> {
-                    List<Question> list = new ArrayList<>();
-                    for (QueryDocumentSnapshot doc : snap) {
-                        QuestionDTO dto = doc.toObject(QuestionDTO.class);
-                        if (dto != null &&
-                                dto.question != null &&
-                                dto.correct != null &&
-                                dto.wrong1 != null &&
-                                dto.wrong2 != null &&
-                                dto.wrong3 != null) {
-                            list.add(Question.fromDTO(dto));
-                        }
-                    }
-                    if (list.isEmpty()) {
-                        error.setValue(new IllegalStateException("No se encontraron preguntas en la base de datos."));
-                        return;
-                    }
-                    Collections.shuffle(list);
-                    if (list.size() > 5) {
-                        list = new ArrayList<>(list.subList(0, 5));
-                    }
-                    questions.setValue(list);
-                    currentIndex.setValue(0);
-                    startQuestion();
-                })
-                .addOnFailureListener(error::setValue);
+        repo.fetch(10, "easy", new QuestionsRepository.Callback() {
+            @Override public void onSuccess(List<Question> list) {
+                if (list.isEmpty()) {
+                    error.setValue(new IllegalStateException("Sin preguntas."));
+                    return;
+                }
+                Collections.shuffle(list);
+                if (list.size() > 5) list = new ArrayList<>(list.subList(0, 5));
+                questions.setValue(list);
+                currentIndex.setValue(0);
+                startQuestion();
+            }
+            @Override public void onError(Throwable t) {
+                error.setValue(new Exception(t));
+            }
+        });
     }
 
     private void startQuestion() {
@@ -128,12 +113,11 @@ public class MusicViewModel extends AndroidViewModel {
 
         cancelTimer();
         timer = new CountDownTimer(QUESTION_MILLIS, 1_000) {
-            public void onTick(long ms) {
-            }
+            public void onTick(long ms) {}
             public void onFinish() {
                 locked.setValue(true);
                 selectedIndex.setValue(null);
-                handler.postDelayed(MusicViewModel.this::nextQuestion, HILIGHT_MILLIS);
+                handler.postDelayed(LanguageViewModel.this::nextQuestion, HILIGHT_MILLIS);
             }
         }.start();
     }
@@ -148,9 +132,7 @@ public class MusicViewModel extends AndroidViewModel {
         Question q = getCurrentQuestionSync();
         if (q == null) return;
 
-        if (idx == q.correctIndex) {
-            points++;
-        }
+        if (idx == q.correctIndex) points++;
 
         selectedIndex.setValue(idx);
         handler.postDelayed(this::nextQuestion, HILIGHT_MILLIS);
@@ -197,7 +179,7 @@ public class MusicViewModel extends AndroidViewModel {
         matchData.put("email", finalUserEmail);
         matchData.put("numPoints", numPoints);
         matchData.put("totalPoints", totalQuestions);
-        matchData.put("category", "Música");
+        matchData.put("category", "Lengua");
         matchData.put("timestamp", FieldValue.serverTimestamp());
 
         db.collection("matches").document()
@@ -213,20 +195,18 @@ public class MusicViewModel extends AndroidViewModel {
         }
     }
 
-    @Override
-    protected void onCleared() {
+    @Override protected void onCleared() {
         super.onCleared();
         cancelTimer();
         handler.removeCallbacksAndMessages(null);
     }
 
-    //region Getters
-    public LiveData<List<Question>> getQuestions()      { return questions; }
-    public LiveData<Integer> getCurrentIndex()          { return currentIndex; }
-    public LiveData<Integer> getSelectedIndex()         { return selectedIndex; }
-    public LiveData<Integer> getCorrectIndex()          { return correctIndex; }
-    public LiveData<Boolean> getLocked()                { return locked; }
-    public LiveData<Boolean> getFinished()              { return finished; }
-    public LiveData<Exception> getError()               { return error; }
-    //endregion
+    // Getters LiveData
+    public LiveData<List<Question>> getQuestions() { return questions; }
+    public LiveData<Integer> getCurrentIndex() { return currentIndex; }
+    public LiveData<Integer> getSelectedIndex() { return selectedIndex; }
+    public LiveData<Integer> getCorrectIndex() { return correctIndex; }
+    public LiveData<Boolean> getLocked() { return locked; }
+    public LiveData<Boolean> getFinished() { return finished; }
+    public LiveData<Exception> getError() { return error; }
 }

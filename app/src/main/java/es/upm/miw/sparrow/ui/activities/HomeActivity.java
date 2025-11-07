@@ -27,6 +27,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import es.upm.miw.sparrow.R;
 import es.upm.miw.sparrow.ui.fragments.EnglishFragment;
+import es.upm.miw.sparrow.ui.fragments.LanguageFragment;
 import es.upm.miw.sparrow.ui.fragments.MathsFragment;
 import es.upm.miw.sparrow.ui.fragments.MusicFragment;
 
@@ -148,7 +149,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     .commit();
         });
         btnLanguage.setOnClickListener(v->{
-
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main, new LanguageFragment())
+                    .addToBackStack("language")
+                    .commit();
         });
         btnEnglish.setOnClickListener(v->{
             getSupportFragmentManager()

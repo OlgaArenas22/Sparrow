@@ -44,4 +44,7 @@
 
     <!-- English questions -->
     <string name="hintEnglishQuestion">¿Qué significa "sun" en español?</string>
+
+    <!-- Language questions -->
+    <string name="hintLanguageQuestion">¿Qué es un diptongo?</string>
 </resources>
