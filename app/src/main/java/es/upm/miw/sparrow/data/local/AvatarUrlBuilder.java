@@ -3,31 +3,28 @@ package es.upm.miw.sparrow.data.local;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import es.upm.miw.sparrow.R;
+
 public final class AvatarUrlBuilder {
     private static final String BASE = "https://api.dicebear.com/9.x";
     private static final String STYLE = "fun-emoji";
 
-    // Paleta (sin #). Cambia/añade los que quieras.
     private static final String[] PALETTE = new String[]{
-            "FFE082", // amber suave
-            "AED581", // green suave
-            "81D4FA", // light blue
-            "FFAB91", // light orange
-            "CE93D8", // purple
-            "80CBC4", // teal
-            "FFF59D", // yellow suave
-            "F8BBD0"  // pink
+            "FFC107", //soft_amber
+            "ABF650", //soft_green
+            "77D2FB", //light_blue
+            "FF4A89", //pink
+            "E46FF8", //purple
+            "FADB3B", //soft_yellow
+            "009688", //teal
+            "FB683F", //light_red
     };
 
     private AvatarUrlBuilder() {}
-
-    /** Usa color de fondo elegido automáticamente a partir de la seed */
     public static String buildAutoBg(String seed, int size) {
         String bg = pickBgFromSeed(seed);
         return build(seed, size, bg);
     }
-
-    /** Construye URL con fondo especificado (hex sin #) */
     public static String build(String seed, int size, String bgHexNoHash) {
         if (TextUtils.isEmpty(seed)) seed = "SparrowDefault";
         if (size > 256) size = 256; // PNG <= 256

@@ -29,7 +29,7 @@ public class EditProfileFragment extends Fragment {
     public static final String FR_BUNDLE_SEED = "seed";
 
     private String email;
-    private ImageButton btnAvatar;
+    private ImageButton btnAvatar, btnReturn;
     private ImageView ivAvatar;
     private TextView tvEmail;
 
@@ -46,13 +46,11 @@ public class EditProfileFragment extends Fragment {
         if (getArguments() != null) {
             email = getArguments().getString(ARG_EMAIL);
         } else {
-            // fallback al prefs global que ya usas en Home
             SharedPreferences sp = requireContext()
                     .getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
             email = sp.getString("email", null);
         }
 
-        // Recibe la seed seleccionada desde el BottomSheet
         getParentFragmentManager().setFragmentResultListener(FR_KEY, this,
                 new FragmentResultListener() {
                     @Override
@@ -77,6 +75,7 @@ public class EditProfileFragment extends Fragment {
         tvEmail = v.findViewById(R.id.tvEmail);
         btnAvatar = v.findViewById(R.id.btnAvatar);
         ivAvatar = v.findViewById(R.id.ivAvatar);
+        btnReturn = v.findViewById(R.id.btnReturn);
 
         tvEmail.setText(email != null ? email : getString(R.string.emailHint));
         refreshAvatarUi();
@@ -84,6 +83,10 @@ public class EditProfileFragment extends Fragment {
         btnAvatar.setOnClickListener(view -> {
             AvatarPickerBottomSheet sheet = new AvatarPickerBottomSheet();
             sheet.show(getParentFragmentManager(), "avatar_picker");
+        });
+
+        btnReturn.setOnClickListener(view ->{
+            getParentFragmentManager().popBackStack();
         });
     }
 

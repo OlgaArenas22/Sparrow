@@ -71,4 +71,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title"
         app:layout_constraintVertical_bias="0.17" />
+
+    <ImageButton
+        android:id="@+id/btnReturn"
+        style="@style/RoundedReturnButtonStyle"
+        android:contentDescription="@string/txtGameAgain"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvEmail"
+        app:layout_constraintVertical_bias="0.751"
+        app:srcCompat="@drawable/cancel_icon" />
 </androidx.constraintlayout.widget.ConstraintLayout>
