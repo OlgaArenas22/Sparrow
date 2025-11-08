@@ -34,6 +34,7 @@ import es.upm.miw.sparrow.ui.fragments.ArtFragment;
 import es.upm.miw.sparrow.ui.fragments.EditProfileFragment;
 import es.upm.miw.sparrow.ui.fragments.EnglishFragment;
 import es.upm.miw.sparrow.ui.fragments.LanguageFragment;
+import es.upm.miw.sparrow.ui.fragments.MatchesFragment;
 import es.upm.miw.sparrow.ui.fragments.MathsFragment;
 import es.upm.miw.sparrow.ui.fragments.MusicFragment;
 
@@ -115,6 +116,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     .addToBackStack("edit_profile")
                     .commit();
         } else if (id == R.id.matches){
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main, new MatchesFragment())
+                    .addToBackStack("matches")
+                    .commit();
 
         }else if (id == R.id.nav_settings) {
 

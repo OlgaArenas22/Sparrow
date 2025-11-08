@@ -61,4 +61,9 @@
     <string name="txtWarning">¡ATENCIÓN!</string>
     <string name="txtResume">Continuar</string>
     <string name="txtExit">Salir</string>
+
+    <!-- Matches -->
+    <string name="txtCategory">Categoría</string>
+    <string name="txtPoints">Puntos</string>
+    <string name="txtDate">Fecha</string>
 </resources>
