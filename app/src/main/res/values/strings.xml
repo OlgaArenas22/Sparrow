@@ -66,4 +66,28 @@
     <string name="txtCategory">Categoría</string>
     <string name="txtPoints">Puntos</string>
     <string name="txtDate">Fecha</string>
+
+    <!-- Filter -->
+    <string name="filter">Filtrar</string>
+    <string name="filter_category">Categoría</string>
+    <string name="filter_result">Resultado</string>
+    <string name="filter_date">Fecha</string>
+    <string-array name="filter_categories">
+        <item>Todos</item>
+        <item>Música</item>
+        <item>Arte</item>
+        <item>Matemáticas</item>
+        <item>Lengua</item>
+        <item>Inglés</item>
+    </string-array>
+    <string-array name="filter_results">
+        <item>Todos</item>
+        <item>Victorias</item>
+        <item>Derrotas</item>
+    </string-array>
+    <string-array name="filter_dates">
+        <item>Más reciente</item>
+        <item>Más antigua</item>
+    </string-array>
+
 </resources>

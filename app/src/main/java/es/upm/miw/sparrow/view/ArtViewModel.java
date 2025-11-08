@@ -232,7 +232,7 @@ public class ArtViewModel extends AndroidViewModel {
         matchData.put("email", finalUserEmail);
         matchData.put("numPoints", numPoints);
         matchData.put("totalPoints", totalQuestions);
-        matchData.put("category", "Música");
+        matchData.put("category", "Arte");
         matchData.put("timestamp", FieldValue.serverTimestamp());
 
         db.collection("matches").document()
