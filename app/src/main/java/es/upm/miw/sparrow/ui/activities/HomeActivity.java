@@ -37,6 +37,7 @@ import es.upm.miw.sparrow.ui.fragments.LanguageFragment;
 import es.upm.miw.sparrow.ui.fragments.MatchesFragment;
 import es.upm.miw.sparrow.ui.fragments.MathsFragment;
 import es.upm.miw.sparrow.ui.fragments.MusicFragment;
+import es.upm.miw.sparrow.ui.fragments.SettingsFragment;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -123,6 +124,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     .commit();
 
         }else if (id == R.id.nav_settings) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main, SettingsFragment.newInstance())
+                    .addToBackStack("settings")
+                    .commit();
 
         } else if (id == R.id.btnLogout) {
             dataClear();
@@ -149,9 +155,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+            return;
         }
+
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+        if (count == initialBackStack) {
+            finishAffinity();
+            System.exit(0);
+            return;
+        }
+        super.onBackPressed();
     }
     //endregion
 

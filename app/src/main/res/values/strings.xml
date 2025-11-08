@@ -90,4 +90,7 @@
         <item>Más antigua</item>
     </string-array>
 
+    <!-- Settings -->
+    <string name="setting_music">Música</string>
+
 </resources>

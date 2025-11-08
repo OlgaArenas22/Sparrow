@@ -26,11 +26,12 @@ import com.google.android.material.button.MaterialButton;
 
 import es.upm.miw.sparrow.R;
 import es.upm.miw.sparrow.domain.Question;
+import es.upm.miw.sparrow.ui.audio.MusicManager;
 import es.upm.miw.sparrow.ui.dialogs.ExitQuizDialog;
 import es.upm.miw.sparrow.ui.dialogs.ResultsDialog;
 import es.upm.miw.sparrow.view.ArtViewModel;
 
-public class ArtFragment extends Fragment implements ResultsDialog.GameResultsDialogListener, ExitQuizDialog.ExitQuizDialogListener {
+public class ArtFragment extends BaseQuizFragment implements ResultsDialog.GameResultsDialogListener, ExitQuizDialog.ExitQuizDialogListener {
 
     private static final int MILLIS = 10 * 1000;
 
@@ -48,7 +49,13 @@ public class ArtFragment extends Fragment implements ResultsDialog.GameResultsDi
 
     private ValueAnimator timerAnimator;
 
-    public ArtFragment() {}
+    public ArtFragment() {
+        super(R.layout.fragment_art);
+    }
+
+    @Override protected int musicRes() {
+        return R.raw.quiz_loop;
+    }
     private int currentProcess;
     private float currentAnimation;
 
@@ -64,7 +71,7 @@ public class ArtFragment extends Fragment implements ResultsDialog.GameResultsDi
                 requireView().post(() -> {
                     if (!isAdded()) return;
                     ExitQuizDialog dialog = ExitQuizDialog.newInstance();
-                    dialog.show(getChildFragmentManager(), ResultsDialog.TAG);
+                    dialog.show(getChildFragmentManager(), ExitQuizDialog.TAG);
                 });
 
             }
@@ -202,6 +209,7 @@ public class ArtFragment extends Fragment implements ResultsDialog.GameResultsDi
         if (!isAdded()) return;
         if (getChildFragmentManager().findFragmentByTag(ResultsDialog.TAG) != null) return;
         requireView().post(() -> {
+            MusicManager.get(requireContext()).stopAndRelease();
             if (!isAdded()) return;
             ResultsDialog dialog = ResultsDialog.newInstance(vm.getPoints(), vm.getTotalQuestions());
             dialog.show(getChildFragmentManager(), ResultsDialog.TAG);
