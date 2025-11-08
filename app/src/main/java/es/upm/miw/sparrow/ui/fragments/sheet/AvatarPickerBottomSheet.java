@@ -40,8 +40,6 @@ public class AvatarPickerBottomSheet extends BottomSheetDialogFragment {
                     behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                     behavior.setSkipCollapsed(true);
                     behavior.setDraggable(true);
-                    // Si usas layout_height="match_parent" en el RV, esto ayuda:
-                    // behavior.setPeekHeight(bottomSheet.getHeight());
                 }
             });
         }

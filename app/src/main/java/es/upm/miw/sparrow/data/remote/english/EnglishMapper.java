@@ -37,7 +37,6 @@ public final class EnglishMapper {
                 if (out.size() == 3) break;
             }
         }
-        // Relleno de seguridad
         while (out.size() < 3) {
             out.add(fallbackDistractor(correctEs, out.size()));
         }

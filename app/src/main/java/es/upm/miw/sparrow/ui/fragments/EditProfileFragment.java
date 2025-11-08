@@ -31,7 +31,7 @@ public class EditProfileFragment extends Fragment {
     public static final String FR_KEY = "avatar_pick_key";
     public static final String FR_BUNDLE_SEED = "seed";
 
-    private String email; // solo para mostrar en UI
+    private String email;
     private ImageButton btnAvatar, btnReturn;
     private ImageView ivAvatar;
     private TextView tvEmail;
@@ -52,7 +52,6 @@ public class EditProfileFragment extends Fragment {
         super.onCreate(savedInstanceState);
         usersRepo = new UsersRepository();
 
-        // Email solo para pintar en la UI; el avatar se gestiona por UID.
         if (getArguments() != null) {
             email = getArguments().getString(ARG_EMAIL);
         }
@@ -66,7 +65,6 @@ public class EditProfileFragment extends Fragment {
             email = sp.getString("email", null);
         }
 
-        // Recibe el seed del BottomSheet y actualiza el avatar en Firestore por UID
         getParentFragmentManager().setFragmentResultListener(FR_KEY, this, (requestKey, result) -> {
             String seed = result.getString(FR_BUNDLE_SEED);
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -76,7 +74,6 @@ public class EditProfileFragment extends Fragment {
 
                 usersRepo.updateAvatarByUid(uid, newUrl, new UsersRepository.CompletionListener() {
                     @Override public void onSuccess() {
-                        // Se actualizará en tiempo real por el observer; si quieres, fuerza un refresh puntual:
                         refreshOnce(uid);
                         refreshNavHeaderInActivity();
                     }
@@ -129,7 +126,6 @@ public class EditProfileFragment extends Fragment {
         }
     }
 
-    /** Observa en tiempo real el doc users/{uid} y pinta el avatar. */
     private void startSelfObserver() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null || ivAvatar == null) return;
@@ -161,7 +157,6 @@ public class EditProfileFragment extends Fragment {
         });
     }
 
-    /** Lectura puntual (no en tiempo real) tras actualizar. */
     private void refreshOnce(String uid) {
         usersRepo.getUserOnceByUid(uid, new UsersRepository.UserListener() {
             @Override

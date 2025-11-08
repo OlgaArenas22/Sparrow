@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,7 +29,6 @@ import com.google.firebase.firestore.ListenerRegistration;
 import androidx.appcompat.widget.Toolbar;
 
 import es.upm.miw.sparrow.R;
-import es.upm.miw.sparrow.data.local.AvatarPrefs;
 import es.upm.miw.sparrow.data.local.AvatarUrlBuilder;
 import es.upm.miw.sparrow.data.users.UsersRepository;
 import es.upm.miw.sparrow.ui.fragments.ArtFragment;

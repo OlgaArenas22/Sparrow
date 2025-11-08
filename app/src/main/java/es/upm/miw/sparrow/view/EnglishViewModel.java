@@ -20,7 +20,6 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +29,6 @@ import es.upm.miw.sparrow.R;
 import es.upm.miw.sparrow.data.QuestionsRepository;
 import es.upm.miw.sparrow.data.QuestionsRepositoryImpl;
 import es.upm.miw.sparrow.data.datasource.EnglishVocabDataSource;
-import es.upm.miw.sparrow.data.datasource.OpenTdbDataSource;
 import es.upm.miw.sparrow.domain.Question;
 
 public class EnglishViewModel extends AndroidViewModel {

@@ -32,15 +32,11 @@ public class MatchesFragment extends Fragment {
     private ProgressBar progress;
     private MatchAdapter adapter;
 
-    // Filtros UI
     private View filtersContainer;
     private View btnFilter;
     private MaterialAutoCompleteTextView dropCategory, dropResult, dropDate;
 
-    // Datos
     private final List<Match> allMatches = new ArrayList<>();
-
-    // Estado de filtros
     private String selectedCategory = "Todos";
     private String selectedResult = "Todos";
     private String selectedDate = "Más reciente";
@@ -106,12 +102,10 @@ public class MatchesFragment extends Fragment {
             applyFilters();
         });
 
-        // ----- Recycler -----
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new MatchAdapter(requireContext(), new ArrayList<>());
         rv.setAdapter(adapter);
 
-        // ----- ViewModel -----
         vm = new ViewModelProvider(this).get(MatchesViewModel.class);
 
         vm.loading().observe(getViewLifecycleOwner(), isLoading -> {
@@ -141,18 +135,14 @@ public class MatchesFragment extends Fragment {
     private void applyFilters() {
         List<Match> filtered = new ArrayList<>();
         for (Match m : allMatches) {
-            // Categoría
             if (!"Todos".equalsIgnoreCase(selectedCategory)) {
                 if (m.category == null || !m.category.equalsIgnoreCase(selectedCategory)) continue;
             }
-            // Resultado
             if ("Victorias".equalsIgnoreCase(selectedResult) && !m.isPassed()) continue;
             if ("Derrotas".equalsIgnoreCase(selectedResult) &&  m.isPassed())  continue;
 
             filtered.add(m);
         }
-
-        // Orden por fecha
         java.util.Collections.sort(filtered, (a, b) -> {
             int cmp = a.timestamp.toDate().compareTo(b.timestamp.toDate());
             return "Más reciente".equalsIgnoreCase(selectedDate) ? -cmp : cmp;

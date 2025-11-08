@@ -1,4 +1,3 @@
-// MathTriviaRepository.java
 package es.upm.miw.sparrow.data;
 
 import androidx.annotation.NonNull;

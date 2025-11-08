@@ -22,7 +22,6 @@ public final class UsersRepository {
         void onError(@NonNull Exception e);
     }
 
-    /** Observa el documento del usuario por UID en tiempo real. */
     public ListenerRegistration observeUserByUid(@NonNull String uid,
                                                  @NonNull UserListener listener) {
         DocumentReference ref = db.collection("users").document(uid);
@@ -39,7 +38,6 @@ public final class UsersRepository {
         });
     }
 
-    /** Lee una vez el usuario por UID. */
     public void getUserOnceByUid(@NonNull String uid,
                                  @NonNull UserListener listener) {
         db.collection("users").document(uid).get()
@@ -53,7 +51,6 @@ public final class UsersRepository {
                 .addOnFailureListener(listener::onError);
     }
 
-    /** Crea (o actualiza) el documento users/{uid} con email y avatar por defecto. */
     public void createOrMergeUserByUid(@NonNull String uid,
                                        @NonNull String email,
                                        @NonNull String defaultAvatarUrl,
@@ -70,7 +67,6 @@ public final class UsersRepository {
                 .addOnFailureListener(cb::onError);
     }
 
-    /** Actualiza el avatar del usuario por UID. */
     public void updateAvatarByUid(@NonNull String uid,
                                   @NonNull String newUrl,
                                   @NonNull CompletionListener cb) {

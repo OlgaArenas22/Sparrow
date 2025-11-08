@@ -30,7 +30,6 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.VH> {
         if (initial != null) data.addAll(initial);
     }
 
-    /** Actualiza los datos del adapter y refresca la lista */
     public void submit(List<Match> newData) {
         data.clear();
         if (newData != null) data.addAll(newData);
@@ -49,12 +48,10 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.VH> {
     public void onBindViewHolder(@NonNull VH h, int pos) {
         Match m = data.get(pos);
 
-        // Rellenar textos
         h.tvCategory.setText(m.category);
         h.tvPoints.setText(m.pointsPretty());
         h.tvDate.setText(formatDate(m.timestamp));
 
-        // Colores dinámicos según puntuación
         int bgColor = context.getColor(m.isPassed() ? R.color.greenAnswer : R.color.redAnswer);
         int fgColor = context.getColor(android.R.color.white);
 
@@ -84,7 +81,6 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.VH> {
         }
     }
 
-    /** Formatea la fecha del timestamp a "dd/MM/yyyy HH:mm" */
     private String formatDate(Timestamp ts) {
         Date d = (ts != null) ? ts.toDate() : new Date();
         return DateFormat.format("dd/MM/yyyy HH:mm", d).toString();

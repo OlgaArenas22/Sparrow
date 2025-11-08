@@ -18,7 +18,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -56,8 +55,6 @@ public class LanguageFragment extends BaseQuizFragment implements ResultsDialog.
     @Override protected int musicRes() {
         return R.raw.quiz_loop;
     }
-    private int currentProcess;
-    private float currentAnimation;
 
     public static LanguageFragment newInstance() { return new LanguageFragment(); }
 

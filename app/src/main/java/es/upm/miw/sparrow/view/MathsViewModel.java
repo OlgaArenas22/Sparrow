@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import es.upm.miw.sparrow.R;
-import es.upm.miw.sparrow.data.MathsTriviaRepository;
 import es.upm.miw.sparrow.data.QuestionsRepository;
 import es.upm.miw.sparrow.data.QuestionsRepositoryImpl;
 import es.upm.miw.sparrow.data.datasource.OpenTdbDataSource;

@@ -1,30 +1,19 @@
 package es.upm.miw.sparrow.data.datasource;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import es.upm.miw.sparrow.R;
 import es.upm.miw.sparrow.domain.Match;
-import android.content.Context;
-import android.util.Log;
 
 
 public class MatchesDataSource {

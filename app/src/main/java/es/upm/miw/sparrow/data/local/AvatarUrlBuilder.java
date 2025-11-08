@@ -2,9 +2,6 @@ package es.upm.miw.sparrow.data.local;
 
 import android.net.Uri;
 import android.text.TextUtils;
-
-import es.upm.miw.sparrow.R;
-
 public final class AvatarUrlBuilder {
     private static final String BASE = "https://api.dicebear.com/9.x";
     private static final String STYLE = "fun-emoji";

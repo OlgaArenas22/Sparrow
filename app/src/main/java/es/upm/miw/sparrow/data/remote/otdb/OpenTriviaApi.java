@@ -1,4 +1,3 @@
-// OpenTriviaApi.java
 package es.upm.miw.sparrow.data.remote.otdb;
 
 import retrofit2.Call;

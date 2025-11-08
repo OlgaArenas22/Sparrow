@@ -30,13 +30,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import es.upm.miw.sparrow.R;
 import es.upm.miw.sparrow.data.local.AvatarUrlBuilder;
 import es.upm.miw.sparrow.data.users.UsersRepository;
@@ -104,11 +98,11 @@ public class AuthActivity extends AppCompatActivity {
                                         createFirebaseUser();
                                         moveHome(email.getText().toString());
                                     }else{
-                                        showAlert();
+                                        showAlert("Error: datos inválidos", "Recuerde que la contraseña tiene que tener mínimo 6 caracteres, 1 mayúscula, 1 minúscula y un caracter especial");
                                     }
                                 }
                             });
-                }else showAlert();
+                }else showAlert("Error: datos inválidos", "Recuerde que la contraseña tiene que tener mínimo 6 caracteres, 1 mayúscula, 1 minúscula y un caracter especial");
             }
         });
 
@@ -123,11 +117,11 @@ public class AuthActivity extends AppCompatActivity {
                                     if(task.isSuccessful()){
                                         moveHome(email.getText().toString());
                                     }else{
-                                        showAlert();
+                                        showAlert("Error", "No se ha podido iniciar sesión");
                                     }
                                 }
                             });
-                }else showAlert();
+                }else showAlert("Error", "El correo o la contraseña no son válidos");
             }
         });
 
@@ -159,25 +153,24 @@ public class AuthActivity extends AppCompatActivity {
                             .signInWithCredential(credential)
                             .addOnCompleteListener(this, t -> {
                                 if (t.isSuccessful()) {
-                                    // SOLO crea el doc si no existe
                                     createFirebaseUserIfMissing();
                                     moveHome(account.getEmail());
                                 } else {
-                                    showAlert();
+                                    showAlert("Error", "Error al crear usuario");
                                 }
                             });
                 }
 
             } catch (ApiException e) {
-                showAlert();
+                showAlert("Error", "Error al iniciar sesión con Google");
             }
         }
     }
 
-    private void showAlert(){
+    private void showAlert(String title, String message){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Error");
-        builder.setMessage("Error de autenticación");
+        builder.setTitle(title);
+        builder.setMessage(message);
         builder.setPositiveButton("Aceptar", null);
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -188,8 +181,6 @@ public class AuthActivity extends AppCompatActivity {
         home.putExtra("email",email);
         startActivity(home);
     }
-
-    /** Crea/mergea el doc users/{uid} con email y avatar por defecto (idempotente). */
     public void createFirebaseUser(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -199,8 +190,8 @@ public class AuthActivity extends AppCompatActivity {
 
             UsersRepository usersRepo = new UsersRepository();
             usersRepo.createOrMergeUserByUid(uid, email, defaultAvatar, new UsersRepository.CompletionListener() {
-                @Override public void onSuccess() { /* ok */ }
-                @Override public void onError(@NonNull Exception e) { /* log/Toast si quieres */ }
+                @Override public void onSuccess() {}
+                @Override public void onError(@NonNull Exception e) { }
             });
         }
     }
@@ -219,7 +210,7 @@ public class AuthActivity extends AppCompatActivity {
                     createFirebaseUser();
                 })
                 .addOnFailureListener(err -> {
-                    // opcional: log/Toast
+                    showAlert("Error", "Error al iniciar sesión con Google");
                 });
     }
 }

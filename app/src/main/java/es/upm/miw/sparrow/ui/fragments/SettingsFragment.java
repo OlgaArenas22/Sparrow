@@ -39,22 +39,18 @@ public class SettingsFragment extends Fragment {
 
         final MusicManager mm = MusicManager.get(requireContext());
 
-        // Estado inicial desde preferencias
         boolean enabled = mm.isEnabled();
         swMusic.setChecked(enabled);
         if (sliderVolume != null) {
-            sliderVolume.setValue(mm.getVolume() * 100f); // 0..100
+            sliderVolume.setValue(mm.getVolume() * 100f);
             sliderVolume.setEnabled(enabled);
         }
-        // Estado inicial
         sliderVolume.setEnabled(swMusic.isChecked());
 
-        // Reacciona a cambios del switch
         swMusic.setOnCheckedChangeListener((btn, isChecked) -> {
-            sliderVolume.setEnabled(isChecked);   // <-- clave para que cambien los colores por estado
+            sliderVolume.setEnabled(isChecked);
         });
 
-        // Cambiar ON/OFF música
         swMusic.setOnCheckedChangeListener((btn, isChecked) -> {
             mm.setEnabled(isChecked);
             if (!isChecked) {
@@ -63,10 +59,9 @@ public class SettingsFragment extends Fragment {
             if (sliderVolume != null) sliderVolume.setEnabled(isChecked);
         });
 
-        // Cambiar volumen en tiempo real
         if (sliderVolume != null) {
             sliderVolume.addOnChangeListener((slider, value, fromUser) -> {
-                float vol01 = value / 100f;   // convertir 0..100 a 0..1
+                float vol01 = value / 100f;
                 mm.setVolume(vol01);
             });
         }

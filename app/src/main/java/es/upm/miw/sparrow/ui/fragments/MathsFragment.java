@@ -18,7 +18,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -30,7 +29,6 @@ import es.upm.miw.sparrow.ui.audio.MusicManager;
 import es.upm.miw.sparrow.ui.dialogs.ExitQuizDialog;
 import es.upm.miw.sparrow.ui.dialogs.ResultsDialog;
 import es.upm.miw.sparrow.view.MathsViewModel;
-import es.upm.miw.sparrow.view.MusicViewModel;
 
 public class MathsFragment extends BaseQuizFragment implements ResultsDialog.GameResultsDialogListener, ExitQuizDialog.ExitQuizDialogListener {
 
@@ -57,8 +55,6 @@ public class MathsFragment extends BaseQuizFragment implements ResultsDialog.Gam
     @Override protected int musicRes() {
         return R.raw.quiz_loop;
     }
-    private int currentProcess;
-    private float currentAnimation;
 
     public static MathsFragment newInstance() { return new MathsFragment(); }
 
