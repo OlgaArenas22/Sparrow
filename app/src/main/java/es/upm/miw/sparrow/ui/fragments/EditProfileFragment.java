@@ -3,10 +3,10 @@ package es.upm.miw.sparrow.ui.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,10 +16,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import es.upm.miw.sparrow.R;
-import es.upm.miw.sparrow.data.local.AvatarPrefs;
 import es.upm.miw.sparrow.data.local.AvatarUrlBuilder;
+import es.upm.miw.sparrow.data.users.UsersRepository;
 import es.upm.miw.sparrow.ui.fragments.sheet.AvatarPickerBottomSheet;
 
 public class EditProfileFragment extends Fragment {
@@ -28,10 +31,13 @@ public class EditProfileFragment extends Fragment {
     public static final String FR_KEY = "avatar_pick_key";
     public static final String FR_BUNDLE_SEED = "seed";
 
-    private String email;
+    private String email; // solo para mostrar en UI
     private ImageButton btnAvatar, btnReturn;
     private ImageView ivAvatar;
     private TextView tvEmail;
+
+    private UsersRepository usersRepo;
+    private ListenerRegistration selfReg;
 
     public static EditProfileFragment newInstance(String email) {
         EditProfileFragment f = new EditProfileFragment();
@@ -41,28 +47,45 @@ public class EditProfileFragment extends Fragment {
         return f;
     }
 
-    @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        usersRepo = new UsersRepository();
+
+        // Email solo para pintar en la UI; el avatar se gestiona por UID.
         if (getArguments() != null) {
             email = getArguments().getString(ARG_EMAIL);
-        } else {
+        }
+        if (email == null) {
+            FirebaseUser fu = FirebaseAuth.getInstance().getCurrentUser();
+            if (fu != null) email = fu.getEmail();
+        }
+        if (email == null) {
             SharedPreferences sp = requireContext()
                     .getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
             email = sp.getString("email", null);
         }
 
-        getParentFragmentManager().setFragmentResultListener(FR_KEY, this,
-                new FragmentResultListener() {
-                    @Override
-                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                        String seed = result.getString(FR_BUNDLE_SEED);
-                        if (seed != null) {
-                            AvatarPrefs.saveSeed(requireContext(), email, seed);
-                            refreshAvatarUi();
-                            refreshNavHeaderInActivity();
-                        }
+        // Recibe el seed del BottomSheet y actualiza el avatar en Firestore por UID
+        getParentFragmentManager().setFragmentResultListener(FR_KEY, this, (requestKey, result) -> {
+            String seed = result.getString(FR_BUNDLE_SEED);
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user != null && seed != null) {
+                String uid = user.getUid();
+                String newUrl = AvatarUrlBuilder.buildAutoBg(seed, 256);
+
+                usersRepo.updateAvatarByUid(uid, newUrl, new UsersRepository.CompletionListener() {
+                    @Override public void onSuccess() {
+                        // Se actualizará en tiempo real por el observer; si quieres, fuerza un refresh puntual:
+                        refreshOnce(uid);
+                        refreshNavHeaderInActivity();
+                    }
+                    @Override public void onError(@NonNull Exception e) {
+                        // opcional: Toast/log
                     }
                 });
+            }
+        });
     }
 
     @Nullable @Override
@@ -71,29 +94,97 @@ public class EditProfileFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_edit_profile, container, false);
     }
 
-    @Override public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
+    @Override
+    public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         tvEmail = v.findViewById(R.id.tvEmail);
         btnAvatar = v.findViewById(R.id.btnAvatar);
         ivAvatar = v.findViewById(R.id.ivAvatar);
         btnReturn = v.findViewById(R.id.btnReturn);
 
         tvEmail.setText(email != null ? email : getString(R.string.emailHint));
-        refreshAvatarUi();
 
-        btnAvatar.setOnClickListener(view -> {
-            AvatarPickerBottomSheet sheet = new AvatarPickerBottomSheet();
-            sheet.show(getParentFragmentManager(), "avatar_picker");
-        });
+        btnAvatar.setOnClickListener(view ->
+                new AvatarPickerBottomSheet().show(getParentFragmentManager(), "avatar_picker")
+        );
 
-        btnReturn.setOnClickListener(view ->{
-            getParentFragmentManager().popBackStack();
+        btnReturn.setOnClickListener(view ->
+                getParentFragmentManager().popBackStack()
+        );
+
+        startSelfObserver();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        startSelfObserver();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (selfReg != null) {
+            selfReg.remove();
+            selfReg = null;
+        }
+    }
+
+    /** Observa en tiempo real el doc users/{uid} y pinta el avatar. */
+    private void startSelfObserver() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null || ivAvatar == null) return;
+
+        String uid = user.getUid();
+
+        if (selfReg != null) selfReg.remove();
+        selfReg = usersRepo.observeUserByUid(uid, new UsersRepository.UserListener() {
+            @Override
+            public void onUser(String emailFromDb, String avatarUrl) {
+                String url = (avatarUrl != null && !avatarUrl.isEmpty())
+                        ? avatarUrl
+                        : AvatarUrlBuilder.buildAutoBg(uid, 256);
+
+                Glide.with(EditProfileFragment.this)
+                        .load(url)
+                        .placeholder(R.drawable.ic_sparrow_rounded)
+                        .into(ivAvatar);
+            }
+
+            @Override
+            public void onError(@NonNull Exception e) {
+                String fallback = AvatarUrlBuilder.buildAutoBg(uid, 256);
+                Glide.with(EditProfileFragment.this)
+                        .load(fallback)
+                        .placeholder(R.drawable.ic_sparrow_rounded)
+                        .into(ivAvatar);
+            }
         });
     }
 
-    private void refreshAvatarUi() {
-        String seed = AvatarPrefs.getSeed(requireContext(), email);
-        String url = AvatarUrlBuilder.buildAutoBg(seed, 256);
-        Glide.with(this).load(url).placeholder(R.drawable.ic_sparrow_rounded).into(ivAvatar);
+    /** Lectura puntual (no en tiempo real) tras actualizar. */
+    private void refreshOnce(String uid) {
+        usersRepo.getUserOnceByUid(uid, new UsersRepository.UserListener() {
+            @Override
+            public void onUser(String emailFromDb, String avatarUrl) {
+                String url = (avatarUrl != null && !avatarUrl.isEmpty())
+                        ? avatarUrl
+                        : AvatarUrlBuilder.buildAutoBg(uid, 256);
+
+                Glide.with(EditProfileFragment.this)
+                        .load(url)
+                        .placeholder(R.drawable.ic_sparrow_rounded)
+                        .into(ivAvatar);
+            }
+
+            @Override
+            public void onError(@NonNull Exception e) {
+                String fallback = AvatarUrlBuilder.buildAutoBg(uid, 256);
+                Glide.with(EditProfileFragment.this)
+                        .load(fallback)
+                        .placeholder(R.drawable.ic_sparrow_rounded)
+                        .into(ivAvatar);
+            }
+        });
     }
 
     private void refreshNavHeaderInActivity() {

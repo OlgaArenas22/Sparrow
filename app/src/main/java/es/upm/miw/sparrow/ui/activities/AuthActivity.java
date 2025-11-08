@@ -28,9 +28,18 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import es.upm.miw.sparrow.R;
+import es.upm.miw.sparrow.data.local.AvatarUrlBuilder;
+import es.upm.miw.sparrow.data.users.UsersRepository;
 
 public class AuthActivity extends AppCompatActivity {
     private SharedPreferences prefs;
@@ -85,38 +94,43 @@ public class AuthActivity extends AppCompatActivity {
 
         btnSignUp.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                if(!email.getText().isEmpty() && !password.getText().isEmpty()){
-                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(task.isSuccessful()){
-                                moveHome(email.getText().toString());
-
-                            }else{
-                                showAlert();
-                            }
-                        }
-                    });
+                if(!email.getText().toString().isEmpty() && !password.getText().toString().isEmpty()){
+                    FirebaseAuth.getInstance()
+                            .createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if(task.isSuccessful()){
+                                        createFirebaseUser();
+                                        moveHome(email.getText().toString());
+                                    }else{
+                                        showAlert();
+                                    }
+                                }
+                            });
                 }else showAlert();
             }
         });
 
         btnLogin.setOnClickListener(v->{
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                if(!email.getText().isEmpty() && !password.getText().isEmpty()){
-                    FirebaseAuth.getInstance().signInWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(task.isSuccessful()){
-                                moveHome(email.getText().toString());
-                            }else{
-                                showAlert();
-                            }
-                        }
-                    });
+                if(!email.getText().toString().isEmpty() && !password.getText().toString().isEmpty()){
+                    FirebaseAuth.getInstance()
+                            .signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if(task.isSuccessful()){
+                                        moveHome(email.getText().toString());
+                                    }else{
+                                        showAlert();
+                                    }
+                                }
+                            });
                 }else showAlert();
             }
         });
+
         btnGoogle.setOnClickListener(v -> {
             GoogleSignInOptions googleConf = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(getString(R.string.default_web_client_id))
@@ -145,6 +159,8 @@ public class AuthActivity extends AppCompatActivity {
                             .signInWithCredential(credential)
                             .addOnCompleteListener(this, t -> {
                                 if (t.isSuccessful()) {
+                                    // SOLO crea el doc si no existe
+                                    createFirebaseUserIfMissing();
                                     moveHome(account.getEmail());
                                 } else {
                                     showAlert();
@@ -171,5 +187,39 @@ public class AuthActivity extends AppCompatActivity {
         Intent home = new Intent(this, HomeActivity.class);
         home.putExtra("email",email);
         startActivity(home);
+    }
+
+    /** Crea/mergea el doc users/{uid} con email y avatar por defecto (idempotente). */
+    public void createFirebaseUser(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String uid = user.getUid();
+            String email = user.getEmail();
+            String defaultAvatar = AvatarUrlBuilder.buildAutoBg(uid, 256);
+
+            UsersRepository usersRepo = new UsersRepository();
+            usersRepo.createOrMergeUserByUid(uid, email, defaultAvatar, new UsersRepository.CompletionListener() {
+                @Override public void onSuccess() { /* ok */ }
+                @Override public void onError(@NonNull Exception e) { /* log/Toast si quieres */ }
+            });
+        }
+    }
+    private void createFirebaseUserIfMissing(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        String uid = user.getUid();
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(uid).get()
+                .addOnSuccessListener(snap -> {
+                    if (snap.exists()) {
+                        return;
+                    }
+                    createFirebaseUser();
+                })
+                .addOnFailureListener(err -> {
+                    // opcional: log/Toast
+                });
     }
 }

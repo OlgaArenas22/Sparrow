@@ -24,12 +24,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import androidx.appcompat.widget.Toolbar;
 
 import es.upm.miw.sparrow.R;
 import es.upm.miw.sparrow.data.local.AvatarPrefs;
 import es.upm.miw.sparrow.data.local.AvatarUrlBuilder;
+import es.upm.miw.sparrow.data.users.UsersRepository;
 import es.upm.miw.sparrow.ui.fragments.ArtFragment;
 import es.upm.miw.sparrow.ui.fragments.EditProfileFragment;
 import es.upm.miw.sparrow.ui.fragments.EnglishFragment;
@@ -51,6 +54,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     ImageButton btnLanguage;
     ImageButton btnEnglish;
     private int initialBackStack;
+    private UsersRepository usersRepo = new UsersRepository();
+    private ListenerRegistration userReg;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,6 +157,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (userReg != null) {
+            userReg.remove();
+            userReg = null;
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -181,12 +195,34 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         View header = navigationView.getHeaderView(0);
         ImageView photo = header.findViewById(R.id.profilePhoto);
 
-        SharedPreferences sp = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE);
-        String email = sp.getString("email", null);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
 
-        String seed = AvatarPrefs.getSeed(this, email);
-        String url = AvatarUrlBuilder.buildAutoBg(seed, 256);
-        Glide.with(this).load(url).placeholder(R.drawable.ic_sparrow_rounded).into(photo);
+        String uid = user.getUid();
+
+        if (userReg != null) userReg.remove();
+        userReg = usersRepo.observeUserByUid(uid, new UsersRepository.UserListener() {
+            @Override
+            public void onUser(String email, String avatarUrl) {
+                String url = (avatarUrl != null && !avatarUrl.isEmpty())
+                        ? avatarUrl
+                        : AvatarUrlBuilder.buildAutoBg(uid, 256);
+
+                Glide.with(HomeActivity.this)
+                        .load(url)
+                        .placeholder(R.drawable.ic_sparrow_rounded)
+                        .into(photo);
+            }
+
+            @Override
+            public void onError(@NonNull Exception e) {
+                String fallback = AvatarUrlBuilder.buildAutoBg(uid, 256);
+                Glide.with(HomeActivity.this)
+                        .load(fallback)
+                        .placeholder(R.drawable.ic_sparrow_rounded)
+                        .into(photo);
+            }
+        });
     }
 
     public void dataClear(){
